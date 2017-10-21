@@ -1,0 +1,2 @@
+1.npm install antd  #安装到本项目下
+2.需要在index.js中引入该模板的css  import 'antd/dist/antd.css';

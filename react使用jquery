@@ -1,0 +1,11 @@
+I am able to use jQuery in my code by following the steps below :
+
+1) install jquery package using the command
+
+npm install jquery
+
+2)import the package in the component you want to use jQuery with statement
+
+import $ from 'jquery';
+
+shareimprove this answer
