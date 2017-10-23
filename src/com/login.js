@@ -7,19 +7,30 @@
 import React from 'react';
 import {Form, Icon, Input, Button, Checkbox,Card,Alert } from 'antd';
 import MyLayout from "../layout/MyLayout";
+import $ from 'jquery';
+
+import {
+    BrowserRouter as Router,
+    Route,
+    browserHistory,
+    Link,
+    Switch,
+    PropTypes,
+    Redirect
 
 
-//const Login = Form.create()(Login);//在调用的地方，必须使用该条语句进行创建对象，否则出现错误
-//Cannot read property 'getFieldDecorator' of undefined
-
+} from 'react-router-dom';
 
 const FormItem = Form.Item;
-
-
+const LOGIN_URL = 'http://localhost:8083/user/login/'
+const user = {
+    username: '',
+    password: ''
+}
 const onClose = function (e) {
     console.log(e, 'I was closed.');
 };
-export default class MyLogin extends React.Component {
+export default class Login extends React.Component {
 
 
     constructor(props, contex) {
@@ -32,14 +43,45 @@ export default class MyLogin extends React.Component {
     }
 
 
+    login=(values)=>{
+        $.ajax({
+            type:"post",
+            dataType:"json",
+            contentType:"application/json",
+            url:LOGIN_URL,
+            data:JSON.stringify(values),
+            statusCode:{
+                200:function(data){
+                    //登录成功！
+                   localStorage.setItem("username",values.username)
+                   this.setState({
+                       errorshow:false,
+                       successshow:true
 
+                   })
+                }.bind(this),
+                404:function(data){
+                    console.log(123);
+                    this.setState({
+                        errorshow:true,
+                        successshow:false
+
+                    })
+                }.bind(this)
+            }
+
+
+        });
+
+    }
     handleSubmit = (e) => {//提交
         e.preventDefault();//阻止自身事件发生
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
+                this.login(values)
             }
-            //
+
         });
 
     }
@@ -48,11 +90,15 @@ export default class MyLogin extends React.Component {
         const { errorshow,successshow } = this.state;
         const {getFieldDecorator} = this.props.form;
         //否则进行正常的再次登录
-
+        if(this.state.successshow){
+            return (
+                <Redirect to={{pathname:'/'}}/>
+            )
+        }
         return (
             <MyLayout>
 
-            <Card title="登录用户" bordered={false} style={{ width: 300 }}>
+            <Card title="登录用户" bordered={false} style={{ width: 400 }}>
                 <div style={{ padding: '30px' }}>
                     <div style={{ display: errorshow ? 'block' : 'none' }}>
                         <Alert message="登录失败"

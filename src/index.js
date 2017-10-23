@@ -6,7 +6,7 @@ import 'antd/dist/antd.css';
 
 import Login from "./com/login";
 import { Form } from 'antd';
-import Reg from "./temp/Reg";
+import Reg from "./com/reg";
 import MyRouter from "./router/myrouter";
 
 const MyLogin = Form.create()(Login);

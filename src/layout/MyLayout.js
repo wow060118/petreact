@@ -10,21 +10,19 @@ import {
     Switch,
     Redirect
 } from 'react-router-dom';
-
+import $ from 'jquery';
 import { Layout, Menu, Breadcrumb ,Icon,message,Popconfirm ,Card} from 'antd';
 
 const { Header, Content, Footer,Sider  } = Layout;
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
-
+const LOGOUT_URL = 'http://localhost:8083/user/logout/'
 export default class MyLayout extends React.Component {
     state = {
         collapsed: false,
         mode: 'inline',
         logout:false
-
     };
-
     onCollapse = (collapsed) => {
         console.log(collapsed);
         this.setState({
@@ -33,18 +31,38 @@ export default class MyLayout extends React.Component {
         });
     }
     confirm=(e)=> {
-        if(window.sessionStorage.getItem("pusername")!=null){
-            window.sessionStorage.removeItem("pusername");
-            this.setState({
-                logout:true
+        if(localStorage.getItem("username")!=null){
+            $.ajax({
+                type:"get",
+                dataType:"json",
+                contentType:"application/json",
+                url:LOGOUT_URL,
+
+                statusCode:{
+                    200:function(data){
+                        //注销成功！
+                        localStorage.removeItem("username");
+                        this.setState({
+                            logout:true
+                        });
+                        message.success('系统已经注销！');
+
+
+                    }.bind(this),
+                    404:function(data){
+                        message.error('系统注销失败！');
+                    }.bind(this)
+                }
+
+
             });
-            message.success('系统已经注销！');
+
         }
     }
     render() {
         //children固定，指的是子组件
-
-        var title="我的宠物商店";
+        console.log(localStorage.getItem("username"))
+        var title=localStorage.getItem("username")==null?"我的宠物商店":localStorage.getItem("username")+"宠物商店";
 
 
         return (
@@ -73,8 +91,9 @@ export default class MyLayout extends React.Component {
 
                                     &nbsp;&nbsp;
                                     <img  src="../../images/separator.gif"/>
-
-                                        <img  src="../../images/reg.gif"/>
+                                         <Link to={{pathname:'/reg'}} >
+                                            <img  src="../../images/reg.gif"/>
+                                         </Link>
 
                                     <img  src="../../images/separator.gif"/>
 
@@ -119,6 +138,7 @@ export default class MyLayout extends React.Component {
                                                         onConfirm={this.confirm}
                                                         okText="是" cancelText="否">
                                                注销
+
                                             </Popconfirm>
                                         </Menu.Item>
                                     </SubMenu>

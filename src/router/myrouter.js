@@ -10,11 +10,13 @@ import {
     browserHistory,
     Link,
     Switch
-
 } from 'react-router-dom';
 import  Home from '../com/home.js'
 import  Login from '../com/login.js'
-const MyLogin=Form.create()(Login)
+
+import  Reg from '../com/reg.js'
+const LoginForm=Form.create()(Login)
+const RegForm=Form.create()(Reg)
 
 export default class MyRouter extends React.Component{
 
@@ -24,7 +26,9 @@ export default class MyRouter extends React.Component{
                 <Router >
                     <div>
                         <Route exact path="/" component={Home}/>
-                        <Route exact path="/login" component={MyLogin}/>
+
+                        <Route path="/login" component={LoginForm}/>
+                        <Route path="/reg" component={RegForm}/>
                     </div>
 
 
@@ -33,3 +37,12 @@ export default class MyRouter extends React.Component{
         )
     }
 }
+// const Logout=()=>{
+//     console.log(123)
+//     return (
+//         <div>
+//
+//         </div>
+//     )
+//
+// }

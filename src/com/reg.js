@@ -6,33 +6,79 @@
  */
 import {Form, Input, Tooltip, Icon, Cascader, Card, Select, Alert , Checkbox, Button} from 'antd';
 import React from 'react';
-
-
+import MyLayout from "../layout/MyLayout";
+import $ from 'jquery';
+import {
+    BrowserRouter as Router,
+    Route,
+    browserHistory,
+    Link,
+    Switch,
+    PropTypes,
+    Redirect
+} from 'react-router-dom';
 const FormItem = Form.Item;
 
 const onClose = function (e) {
     console.log(e, 'I was closed.');
 };
+const QUERY_CATEGORY_ALL = 'http://localhost:8083/user/category/'
+const REG_URL = 'http://localhost:8083/user/reg/'
+
 export  default  class Reg extends React.Component {
     state = {
-
         confirmDirty: false,
         errorshow: false,//出现错误
-        successhow:false//成功
+        successhow:false,//成功
+        options:[],
+        langs:[{
+            langid:'eng',
+            name:'英语'
+        },{
+            langid:'chi',
+            name:'汉语'
+        }]
     };
     handleSubmit = (e) => {//注册新用户
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
+                this.reg(values)
+
             }
         });
-
-
-
     }
     reg = (values) => {
+        values.profile.username=values.username
+        $.ajax({
+            type:"post",
+            dataType:"json",
+            contentType:"application/json",
+            url:REG_URL,
+            data:JSON.stringify(values),
+            statusCode:{
+                200:function(data){
+                    //注册成功
 
+                    this.setState({
+                        errorshow:false,
+                        successshow:true
+
+                    })
+                }.bind(this),
+                404:function(data){
+                    console.log(123);
+                    this.setState({
+                        errorshow:true,
+                        successshow:false
+
+                    })
+                }.bind(this)
+            }
+
+
+        });
     }
     handleConfirmBlur = (e) => {
         const value = e.target.value;
@@ -54,12 +100,33 @@ export  default  class Reg extends React.Component {
         callback();
     }
 
-    componentWillMount() {
-        this.queryCategory();
+    componentWillMount() {//zu
+        this.queryCategory();//
     }
 
     queryCategory = () => {
         //const {options}=this.state;
+        $.ajax({
+            type:"get",
+            dataType:"json",
+            url:QUERY_CATEGORY_ALL,
+            statusCode:{
+                200:function(data){
+                    console.log(data)
+                    //塞数据
+                    this.setState({
+                        options:data
+
+                    })
+
+                }.bind(this),
+                404:function(data){
+
+                }.bind(this)
+            }
+
+
+        });
 
 
 
@@ -67,7 +134,20 @@ export  default  class Reg extends React.Component {
 
     render() {
         const {getFieldDecorator} = this.props.form;
-        const { errorshow,successshow } = this.state;
+        const { errorshow,successshow,langs } = this.state;
+
+        if(successshow===true){
+            return (
+                <Redirect to={{pathname:'/login'}}/>
+            )
+        }
+        const lang=this.state.langs.map(
+            d=><option value={d.langid}>{d.name}</option>
+        )
+        const option=this.state.options.map(
+            d=><option value={d.catid}>{d.name}</option>
+
+        )
         const formItemLayout = {
             labelCol: {
                 xs: {span: 24},
@@ -93,6 +173,7 @@ export  default  class Reg extends React.Component {
 
 
         return (
+                <MyLayout>
 
                 <div style={{padding: '30px'}}>
                     <Card title="注册新用户" bordered={false}>
@@ -123,16 +204,18 @@ export  default  class Reg extends React.Component {
                                 hasFeedback
                             >
                                 {getFieldDecorator('password', {
-                                    rules: [{
-                                        required: true, message: '必须输入密码',
-                                    }, {
-                                        validator: this.checkConfirm,
-                                    }, {
-                                        min: 3, message: '请输入至少三位密码'
-                                    },
+                                    rules: [
+                                        {
+                                            required: true, message: '必须输入密码',
+                                        },
+
+                                        {
+                                            min: 3, message: '请输入至少三位密码'
+                                        },
                                         {
                                             max: 8, message: '请输入最多八位密码'
-                                        }],
+                                        }
+                                    ],
                                 })(
                                     <Input type="password"/>
                                 )}
@@ -214,7 +297,7 @@ export  default  class Reg extends React.Component {
 
                                 })(
                                     <Select placeholder="请选择你的母语">
-
+                                        {lang}
                                     </Select>
                                 )}
                             </FormItem>
@@ -228,7 +311,7 @@ export  default  class Reg extends React.Component {
 
                                 })(
                                     <Select placeholder="请选择你喜爱的宠物">
-
+                                        {option}
                                     </Select>
                                 )}
                             </FormItem>
@@ -247,7 +330,7 @@ export  default  class Reg extends React.Component {
                         </Form>
                     </Card>
                 </div>
-
+                </MyLayout>
         );
     }
 }
