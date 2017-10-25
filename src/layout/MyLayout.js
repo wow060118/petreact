@@ -96,8 +96,9 @@ export default class MyLayout extends React.Component {
                                          </Link>
 
                                     <img  src="../../images/separator.gif"/>
-
+                                    <Link to={{pathname:'/init'}} >
                                         <img  src="../../images/init.gif"/>
+                                    </Link>
 
                                 </td>
                             </tr>
@@ -123,11 +124,11 @@ export default class MyLayout extends React.Component {
                                     mode="inline">
                                     <SubMenu key="sub1" title={<span><Icon type="meh-o" /><span>我的宠物</span></span>}>
                                         <Menu.Item key="FISH">
-                                           小鱼
+                                            <Link to={{pathname:'/pet/cate/FISH'}}>小鱼</Link>
                                         </Menu.Item>
-                                        <Menu.Item key="CATS">小猫</Menu.Item>
-                                        <Menu.Item key="DOGS">小狗</Menu.Item>
-                                        <Menu.Item key="BIRDS">小鸟</Menu.Item>
+                                        <Menu.Item key="CATS"> <Link to={{pathname:'/pet/cate/CATS'}}>小猫</Link></Menu.Item>
+                                        <Menu.Item key="DOGS"><Link to={{pathname:'/pet/cate/DOGS'}}>小狗</Link></Menu.Item>
+                                        <Menu.Item key="BIRDS"><Link to={{pathname:'/pet/cate/BIRDS'}}>小鸟</Link></Menu.Item>
                                     </SubMenu>
                                     <SubMenu key="sub2" title={<span><Icon type="user" /><span>用户管理</span></span>}>
                                         <Menu.Item key="5"> 登录</Menu.Item>

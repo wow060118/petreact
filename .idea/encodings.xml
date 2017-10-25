@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/src/com/cart.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/init.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/item.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/items.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/com/login.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/product.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/temp/Login.js" charset="UTF-8" />
   </component>
 </project>
