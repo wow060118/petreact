@@ -8,7 +8,7 @@ import React from 'react';
 export  default class Cell extends React.Component {
 
     state = {
-        value: this.props.value,
+        value: this.props.myvalue,
         editable: this.props.editable || false,
     }
 
@@ -38,7 +38,9 @@ export  default class Cell extends React.Component {
 
     handleChange(e) {
         const value = e.target.value;
+
         this.setState({value});
+        //this.props.value
 
     }
 

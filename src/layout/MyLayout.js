@@ -79,9 +79,9 @@ export default class MyLayout extends React.Component {
                                     </a>
                                 </td>
                                 <td>
-
+                                    <Link to={{pathname:'/cart/1'}} >
                                         <img src="../../images/cart.gif"/>
-
+                                    </Link>
                                     &nbsp;&nbsp;
                                     <img  src="../../images/separator.gif"/>
                                     &nbsp;&nbsp;
