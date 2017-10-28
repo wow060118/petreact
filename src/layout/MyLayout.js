@@ -144,7 +144,11 @@ export default class MyLayout extends React.Component {
                                         </Menu.Item>
                                     </SubMenu>
                                     <Menu.Item key="shopping">
-                                         <Icon type="shopping-cart" />我的购物车
+                                        <Link to={{pathname:'/cart/1'}} >
+
+                                            <Icon type="shopping-cart" />我的购物车
+                                        </Link>
+
                                     </Menu.Item>
                                 </Menu>
 

@@ -5,7 +5,7 @@
  * Created by Administrator on 2017/10/25.
  */
 import React from 'react';
-import {Table, Icon, Card, Popconfirm} from 'antd';
+import {Table, Icon, Card, Popconfirm,Button} from 'antd';
 import MyLayout from '../layout/MyLayout';
 import Cell from './cell'
 import $ from 'jquery';
@@ -21,6 +21,7 @@ import {
 const QUERY_URL = 'http://localhost:8083/cart/query/'
 const DEL_URL = 'http://localhost:8083/cart/del/'
 const PUT_URL = 'http://localhost:8083/cart/update/'
+const CHECKOUT_URL = 'http://localhost:8083/cart/checkout/'
 const username = ""
 export default class Cart extends React.Component {
 
@@ -31,7 +32,11 @@ export default class Cart extends React.Component {
             cartflag: false,
             successflag:false,
             editable1:"false",
-            newquantity:0
+            newquantity:0,
+            checkout:false,
+            sum:0,
+            total:0
+
 
         }
 
@@ -93,17 +98,18 @@ export default class Cart extends React.Component {
                         return
                     }
 
-                    const {editable} = this.state.data[index].quantity;
+                    const {editable} = this.state.data[index].exquantity;
+
                     return (
                         <div className="editable-row-operations">
                             {
-                                this.state.editable1==="true" ?
+                                editable==="true" ?
                                     <span>
-                                  <a onClick={() => this.save(index, 'save')}>保存</a>&nbsp;&nbsp;
-                                        <Popconfirm title="确定取消?" onConfirm={() => this.cancel(index, 'cancel')}>
-                                    <a>取消</a>
-                                  </Popconfirm>
-                                </span>
+                                      <a onClick={() => this.save(index)}>保存</a>&nbsp;&nbsp;
+                                            <Popconfirm title="确定取消?" onConfirm={() => this.cancel(index, 'cancel')}>
+                                        <a>取消</a>
+                                      </Popconfirm>
+                                    </span>
                                     :
                                     <span>
                                      <a onClick={() => this.edit(index)}>编辑</a>
@@ -118,13 +124,37 @@ export default class Cart extends React.Component {
             }];
 
     }
+    total1=()=>{//计算总计
+
+        const {data}=this.state;
+        let sum=0
+
+        if(data.length!==0){
+            data.map((d) =>{
+                return sum+=d.quantity*d.price
+            })
+
+        }
+
+
+        this.setState({
+            total:sum
+        })
+
+
+
+    }
     edit=(index,value)=>{
+        const {data}=this.state
+
+        data[index].exquantity.editable="true"
 
         this.setState({
             editable1:"true"
         })
     }
     save=(index)=>{
+        var that=this
         let username=localStorage.getItem("username")
         var cart = {
             orderid:this.state.data[index].orderid,
@@ -142,21 +172,21 @@ export default class Cart extends React.Component {
             statusCode: {
                 200: function (datas) {
                     //查询成功！
-                    console.log(datas)
-                    let obj = [{}]
+
+                    let obj = []
                     datas.map((i, index) => {
-                        console.log(i.itemid)
+
                         // console.log(datas[index].itemid)
                         obj[index]=this.makeObj(i,index)
-                        console.log(obj)
+
                     })
-
-
                     this.setState({
                         data:obj,
-                        editable1:"false"
-                    })
+                        editable1:"false",
 
+
+                    })
+                    that.total1()
 
                 }.bind(this),
                 404: function (data) {
@@ -168,10 +198,15 @@ export default class Cart extends React.Component {
         });
     }
     cancel=(index)=>{
-
+        const {data}=this.state
+        data[index].exquantity.editable="false"
+        this.setState({
+            editable1:"false"
+        })
     }
     del=(index)=>{
         let username=localStorage.getItem("username")
+        var that=this
         $.ajax({
             type: "delete",
             dataType: "json",
@@ -179,22 +214,19 @@ export default class Cart extends React.Component {
             statusCode: {
                 200: function (datas) {
                     //查询成功！
-                    console.log(datas)
-                    let obj = [{}]
+
+                    let obj = []
                     datas.map((i, index) => {
-                        console.log(i.itemid)
+
                         // console.log(datas[index].itemid)
                         obj[index]=this.makeObj(i,index)
-                        console.log(obj)
+
                     })
-
-
                     this.setState({
                         data:obj,
                         editable1:"false"
                     })
-
-
+                    that.total1()
                 }.bind(this),
                 404: function (data) {
 
@@ -218,18 +250,32 @@ export default class Cart extends React.Component {
             pic:  i.item.product.pic,
             productid:  i.productid,
             descn:  i.item.product.descn,
-            quantity: i.quantity,
+            quantity:i.quantity,
+            exquantity: {
+                editable:"false"
+            },
             price: i.item.listprice,
             sum:i.quantity*i.item.listprice
         }
         return obj
     }
-    getQuantity=(e)=>{
+    getQuantity=(index,e)=>{
         console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-        console.log(e.target.value)
-        // this.setState({
-        //     newquantity:e.target.value
-        // })
+
+        //const {data}=this.state
+
+        this.setState({
+            newquantity:e.target.value,
+
+
+        })
+        //data.newquantity=e.target.value;
+       // data[index].sum=data[index].price*this.state.newquantity
+
+        // console.log(data[index].price)
+        // console.log(this.state.newquantity)
+        // console.log(data[index].sum)
+
         // console.log(e.target.value)
     }
     renderColumns(data, index, key, text) {
@@ -240,26 +286,53 @@ export default class Cart extends React.Component {
             return;
         }
         const {editable, status} = data[index][key];
-        console.log("@@@@")
+
 
         const {editable1}=this.state
-        console.log(key);
-        console.log(editable1);
-        if(key==='quantity'&&editable1==="true"){
+
+
+       // console.log(editable1);
+        if(key==='quantity'&&data[index].exquantity.editable==="true"){
             return (<Cell
                 editable={editable1}
-                myvalue={this.getQuantity}
-                onChange={value => this.handleChange(key, index, value)}
+                dvalue={data[index].quantity}
+                myvalue={this.getQuantity.bind(this,index)}//带e，传参数
+                onChange={value => this.handleChange(key, index, value) }
                 status={status}
             />);
         }
         return text;
-
-
-
     }
+    checkOut=()=>{
+        var order={
+            username:localStorage.getItem("username"),
+            orderid:this.state.data[0].orderid,
+            totalprice:this.state.total,
+        }
+        $.ajax({
+            type: "post",
+            contentType:"application/json",
+            data:JSON.stringify(order),
+            url: CHECKOUT_URL,
+            statusCode: {
+                200: function (datas) {
+                    // //查询成功！
+                    this.setState({
+                        checkout:true
+                    })
 
+
+                }.bind(this),
+                404: function (data) {
+
+                }.bind(this)
+            }
+
+
+        });
+    }
     refresh = () => {
+        var that=this
         $.ajax({
             type: "get",
             dataType: "json",
@@ -267,20 +340,18 @@ export default class Cart extends React.Component {
             statusCode: {
                 200: function (datas) {
                     //查询成功！
-                    console.log(datas)
-                    let obj = [{}]
 
+                    let obj = []
                     datas.map((i, index) => {
-                        console.log(i.itemid)
+
                         // console.log(datas[index].itemid)
                         obj[index]=this.makeObj(i,index)
-                        console.log(obj)
+
                     })
-
-
                     this.setState({
-                        data:obj
+                        data:obj,
                     })
+                    that.total1()
 
                 }.bind(this),
                 404: function (data) {
@@ -299,12 +370,22 @@ export default class Cart extends React.Component {
                 <Redirect to={{pathname: '/login'}}/>
             )
         }
+        if (this.state.checkout) {//登录
+            return (
+                <Redirect to={{pathname: '/'}}/>
+            )
+        }
         let columns = this.columns
         return (
             <div>
                 <MyLayout>
                     <Card title="宠物项目列表" bordered={false} style={{padding: '30px'}}>
                         <Table columns={columns} dataSource={this.state.data}/>
+                        <span><h3>总计：{this.state.total}元</h3></span>
+                        <br/>
+                        {/*this.state.data.itemid==undefined：没有数据*/}
+                        <Button type="primary" onClick={this.checkOut}
+                                disabled={this.state.total===0}>生成订单{this.state.total}</Button>
                     </Card>
                 </MyLayout>
             </div>

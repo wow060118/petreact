@@ -129,7 +129,7 @@ export default class Item extends React.Component{
 
         return (
             <MyLayout>
-                <Card style={{ width: 340 ,height:400}} bodyStyle={{ padding: 1 }}
+                <Card style={{ width: 350 ,height:450}} bodyStyle={{ padding: 1 }}
                       title="宠物"
                       bordered={true}>
                     <div className="custom-image" >

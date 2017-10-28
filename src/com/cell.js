@@ -6,11 +6,15 @@ import React from 'react';
 
 
 export  default class Cell extends React.Component {
+    constructor(props){
+        super(props)
+        this.state = {
+            value: this.props.myvalue,
+            editable: this.props.editable || false,
+        }
 
-    state = {
-        value: this.props.myvalue,
-        editable: this.props.editable || false,
     }
+
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.editable !== this.state.editable) {
@@ -52,12 +56,14 @@ export  default class Cell extends React.Component {
                 {
                     editable ?
                         <div>
+
                             <Input
                                 type="number"
                                 min={1}
                                 max={20}
-                                value={value}
-                                onChange={e => this.handleChange(e)}
+                                defaultValue={this.props.dvalue}
+                                onInput={this.props.myvalue}
+
                             />
 
                         </div>
