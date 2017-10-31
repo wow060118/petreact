@@ -260,23 +260,12 @@ export default class Cart extends React.Component {
         return obj
     }
     getQuantity=(index,e)=>{
-        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-
-        //const {data}=this.state
-
-        this.setState({
-            newquantity:e.target.value,
+        let {data,newquantity} = this.state;
+        data[index].sum=data[index].price*e.target.value
+        newquantity=e.target.value
+        this.setState({data,newquantity});
 
 
-        })
-        //data.newquantity=e.target.value;
-       // data[index].sum=data[index].price*this.state.newquantity
-
-        // console.log(data[index].price)
-        // console.log(this.state.newquantity)
-        // console.log(data[index].sum)
-
-        // console.log(e.target.value)
     }
     renderColumns(data, index, key, text) {
         //alert(data[index][key]);
@@ -385,7 +374,7 @@ export default class Cart extends React.Component {
                         <br/>
                         {/*this.state.data.itemid==undefined：没有数据*/}
                         <Button type="primary" onClick={this.checkOut}
-                                disabled={this.state.total===0}>生成订单{this.state.total}</Button>
+                                disabled={this.state.total===0}>生成订单</Button>
                     </Card>
                 </MyLayout>
             </div>
