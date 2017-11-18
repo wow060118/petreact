@@ -22,7 +22,7 @@ export default class Item extends React.Component{
     constructor(props){
         super(props)
         this.state={
-            loginflag:false,
+            loginflag:true,
             cartflag:false,
             myvalue:"1",
             item: {//单独的宠物项目
@@ -81,6 +81,13 @@ export default class Item extends React.Component{
         });
     }
     handleSubmit=()=>{
+        var username=localStorage.getItem('username')
+        if(username==null){
+            this.setState({
+                loginflag:false
+            })
+            return
+        }
         var cart = {
             itemid: this.state.item.itemid,
             productid: this.state.item.productid,
@@ -126,7 +133,11 @@ export default class Item extends React.Component{
                 <Redirect to={{pathname:'/cart/1'}}/>
             )
         }
-
+        if(!this.state.loginflag){//可以进入购物车
+            return (
+                <Redirect to={{pathname:'/login'}}/>
+            )
+        }
         return (
             <MyLayout>
                 <Card style={{ width: 350 ,height:450}} bodyStyle={{ padding: 1 }}
