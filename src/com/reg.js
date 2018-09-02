@@ -320,7 +320,7 @@ export  default  class Reg extends React.Component {
                                 {getFieldDecorator('agreement', {
                                     valuePropName: 'checked',
                                 })(
-                                    <Checkbox>我同意遵循易圣通宠物商店章程</Checkbox>
+                                    <Checkbox>我同意遵循宠物商店章程</Checkbox>
                                 )}
                             </FormItem>
                             <FormItem {...tailFormItemLayout}>

@@ -102,7 +102,7 @@ export class MyLayout extends React.Component {
                     </Layout>
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>
-                    易圣通 ©2017 宠物商店
+                    yfr ©2017 宠物商店
                 </Footer>
             </Layout>
         );
